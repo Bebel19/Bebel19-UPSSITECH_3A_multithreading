@@ -46,19 +46,25 @@ class RunResult:
         return float(statistics.mean(self.task_times_s)) if self.task_times_s else 0.0
 
 
-def run_once(minions: int, tasks: int, size: int, step: int, authkey: str = "secret") -> RunResult:
+def run_once(
+    minions: int, tasks: int, size: int, step: int, authkey: str = "secret"
+) -> RunResult:
     host = "127.0.0.1"
     port = get_free_port()
 
     # 1) Start manager (separate process)
-    mgr_proc = Process(target=start_manager, args=(host, port, authkey.encode()), daemon=True)
+    mgr_proc = Process(
+        target=start_manager, args=(host, port, authkey.encode()), daemon=True
+    )
     mgr_proc.start()
     time.sleep(0.25)  # small delay to let server start
 
     # 2) Start minions
     minion_procs: List[Process] = []
     for _ in range(minions):
-        p = Process(target=Minion(host=host, port=port, authkey=authkey).run, daemon=True)
+        p = Process(
+            target=Minion(host=host, port=port, authkey=authkey).run, daemon=True
+        )
         p.start()
         minion_procs.append(p)
 
@@ -112,10 +118,18 @@ def aggregate(results: List[RunResult]) -> Dict[str, Any]:
 
 def print_table(rows: List[Dict[str, Any]]) -> None:
     headers = [
-        "minions", "tasks", "size", "step", "repeats",
-        "wall_mean(s)", "wall_sd",
-        "throughput(task/s)", "throughput_sd",
-        "mean_task_time(s)", "max_task_time(s)", "sum_task_time(s)"
+        "minions",
+        "tasks",
+        "size",
+        "step",
+        "repeats",
+        "wall_mean(s)",
+        "wall_sd",
+        "throughput(task/s)",
+        "throughput_sd",
+        "mean_task_time(s)",
+        "max_task_time(s)",
+        "sum_task_time(s)",
     ]
     print("| " + " | ".join(headers) + " |")
     print("|" + "|".join(["---"] * len(headers)) + "|")
@@ -144,7 +158,13 @@ def print_table(rows: List[Dict[str, Any]]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark TP2 Boss/Minions configs.")
-    parser.add_argument("--minions", type=int, nargs="+", default=[1, 2, 4], help="List of minion counts to try")
+    parser.add_argument(
+        "--minions",
+        type=int,
+        nargs="+",
+        default=[1, 2, 4],
+        help="List of minion counts to try",
+    )
     parser.add_argument("--tasks", type=int, default=10)
     parser.add_argument("--size", type=int, default=300)
     parser.add_argument("--step", type=int, default=50)
@@ -158,17 +178,21 @@ def main() -> None:
         for i in range(args.repeats):
             r = run_once(minions=m, tasks=args.tasks, size=args.size, step=args.step)
             runs.append(r)
-            print(f"[run] minions={m} repeat={i+1}/{args.repeats} wall={r.wall_s:.4f}s throughput={r.throughput:.2f} task/s")
+            print(
+                f"[run] minions={m} repeat={i + 1}/{args.repeats} wall={r.wall_s:.4f}s throughput={r.throughput:.2f} task/s"
+            )
 
         agg = aggregate(runs)
-        rows.append({
-            "minions": m,
-            "tasks": args.tasks,
-            "size": args.size,
-            "step": args.step,
-            "repeats": args.repeats,
-            **agg,
-        })
+        rows.append(
+            {
+                "minions": m,
+                "tasks": args.tasks,
+                "size": args.size,
+                "step": args.step,
+                "repeats": args.repeats,
+                **agg,
+            }
+        )
 
     print("\n### Summary (Markdown table)\n")
     print_table(rows)

@@ -8,12 +8,16 @@ from queue import Queue
 _task_queue: Queue = Queue()
 _result_queue: Queue = Queue()
 
+
 class QueueManager(BaseManager):
     """Server-side manager: exposes task_queue and result_queue."""
+
     pass
 
 
-def start_manager(host: str = "127.0.0.1", port: int = 50000, authkey: bytes = b"secret") -> None:
+def start_manager(
+    host: str = "127.0.0.1", port: int = 50000, authkey: bytes = b"secret"
+) -> None:
     """Start the manager server (blocking, serve_forever)."""
     global _task_queue, _result_queue
     # Fresh queues each time the manager starts
