@@ -40,16 +40,20 @@ def main() -> None:
     parser.add_argument("--minions", type=int, default=2)
     parser.add_argument("--tasks", type=int, default=10)
     parser.add_argument("--size", type=int, default=300)  # base matrix size
-    parser.add_argument("--step", type=int, default=50)   # size increment
+    parser.add_argument("--step", type=int, default=50)  # size increment
     args = parser.parse_args()
 
     sizes = [args.size + i * args.step for i in range(args.tasks)]
-    results = Boss(host=args.host, port=args.port, authkey=args.authkey).run(sizes, args.minions)
+    results = Boss(host=args.host, port=args.port, authkey=args.authkey).run(
+        sizes, args.minions
+    )
 
     # Print a small summary
     for t in sorted(results, key=lambda x: x.identifier):
         # Task from TP1 typically stores timing in t.time
-        print(f"[boss] task id={t.identifier} size={t.size} time={getattr(t, 'time', None)}")
+        print(
+            f"[boss] task id={t.identifier} size={t.size} time={getattr(t, 'time', None)}"
+        )
 
 
 if __name__ == "__main__":

@@ -6,11 +6,14 @@ from typing import Any
 
 class QueueManager(BaseManager):
     """Client-side manager class (same name, no callables here)."""
+
     pass
 
 
 class QueueClient:
-    def __init__(self, host: str = "127.0.0.1", port: int = 50000, authkey: str = "secret"):
+    def __init__(
+        self, host: str = "127.0.0.1", port: int = 50000, authkey: str = "secret"
+    ):
         self.host = host
         self.port = port
         self.authkey = authkey
@@ -23,7 +26,9 @@ class QueueClient:
         QueueManager.register("get_task_queue")
         QueueManager.register("get_result_queue")
 
-        mgr = QueueManager(address=(self.host, self.port), authkey=self.authkey.encode())
+        mgr = QueueManager(
+            address=(self.host, self.port), authkey=self.authkey.encode()
+        )
         mgr.connect()
 
         self.task_queue = mgr.get_task_queue()

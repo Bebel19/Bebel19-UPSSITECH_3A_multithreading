@@ -12,6 +12,7 @@ _result_queue: Queue = Queue()
 
 class QueueManager(BaseManager):
     """Server-side manager: exposes task_queue and result_queue."""
+
     pass
 
 
