@@ -77,4 +77,59 @@ Chaque configuration est répétée plusieurs fois (repeats) et on calcule la mo
 
 - Le parallélisme apporte un bénéfice clair jusqu’à **2 minions**, qui est la configuration la plus performante sur les essais réalisés.
 
----
+# lancer les tests
+
+```bash
+uv run python -m unittest -v
+```
+
+# vérifier qualité/format
+
+```bash
+uv run pre-commit run -a
+```
+
+## TP 4
+
+```bash
+uv run python proxy.py --port 8000
+```
+
+```bash
+cmake -B build -S .
+cmake --build build -j
+./build/low_level 400
+```
+
+## TP4 — Validation et mesures de performance (Proxy HTTP Python + client C++)
+
+### Commandes utilisées
+
+**Terminal 1 (proxy Python)**
+
+```bash
+uv run python proxy.py --port 8000
+./build/low_level 200
+./build/low_level 400
+./build/low_level 800
+```
+
+| Taille n | proxy_time (s) | residual_norm |
+| -------: | -------------: | ------------: |
+|      200 |    0.000366465 |   5.08077e-13 |
+|      400 |     0.00233888 |   1.14833e-12 |
+|      800 |       0.014518 |   9.43684e-12 |
+
+### Analyse
+
+- **Correction** : les valeurs de `residual_norm` sont très petites (de l’ordre de **10^-12**), ce qui confirme :
+  - la compatibilité du format JSON entre C++ et Python ;
+  - la reconstruction correcte de `Task` côté proxy ;
+  - la cohérence du calcul de la solution `x`.
+
+- **Performance** : `proxy_time` augmente fortement avec la taille `n` :
+  - la résolution d’un système linéaire dense a une complexité proche de **O(n^3)** ;
+  - la hausse observée entre **200 -> 400 -> 800** est cohérente avec un coût de calcul dominant ;
+  - la sérialisation/désérialisation JSON et le transport HTTP ajoutent un surcoût, mais lorsque `n` augmente, le temps de calcul devient prépondérant.
+
+- **Conclusion** : le proxy HTTP permet une communication fiable C++ <-> Python via JSON, et le temps de traitement est majoritairement lié à la taille du système linéaire.
