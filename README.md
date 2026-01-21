@@ -15,13 +15,6 @@ sudo apt install -y build-essential cmake libeigen3-dev
 uv sync
 ```
 
-### ou, si tu n'utilises pas uv.lock:
-
-```bash
-uv add numpy
-uv add --dev pre-commit ruff
-```
-
 ## Pour tester
 
 ### Terminal 1
