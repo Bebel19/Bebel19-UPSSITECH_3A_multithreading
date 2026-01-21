@@ -1,5 +1,27 @@
 # TP2 — Analyse des performances (Boss / Minions avec multiprocessing)
 
+## Prerequis
+
+### outils C++ (TP4)
+
+```bash
+sudo apt update
+sudo apt install -y build-essential cmake libeigen3-dev
+```
+
+### dans le dossier du repo
+
+```bash
+uv sync
+```
+
+### ou, si tu n'utilises pas uv.lock:
+
+```bash
+uv add numpy
+uv add --dev pre-commit ruff
+```
+
 ## Pour tester
 
 ### Terminal 1
